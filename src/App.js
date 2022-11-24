@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import styled from "styled-components";
+import Header from "./layout/Header";
+import Background from "./layout/Background";
+import Banner from "./layout/Banner";
+import Modal from "./layout/Modal";
+import { useState } from "react";
 
-function App() {
+export default function App() {
+  const [openModal, setOpenModal] = useState(false);
+  const buttonModalHandler = () => {
+    setOpenModal((openModal) => (openModal = !openModal));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppOutline>
+      <Header modalHandler={buttonModalHandler} />
+      <Background />
+      <Banner />
+      {openModal && <Modal modalHandler={buttonModalHandler} />}
+    </AppOutline>
   );
 }
 
-export default App;
+const AppOutline = styled.div`
+  body {
+    background-color: rgb(242, 246, 255);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: rgb(31, 31, 71);
+    }
+  }
+`;
