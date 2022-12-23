@@ -84,6 +84,7 @@ const HeaderLogo = styled.img`
 `;
 
 const HeaderWrapper = styled.div`
+  background-color: red;
   position: absolute;
   display: flex;
   justify-content: space-between;

@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import Wave1 from "../components/Background/Wave1";
 import Wave2 from "../components/Background/Wave2";
@@ -23,6 +24,8 @@ const WaveWrapper = styled.div`
   height: 1300px;
   width: 100%;
   overflow: hidden;
+  margin: 0px;
+  padding: 0px;
 `;
 
 const WaveBackground = styled.div`

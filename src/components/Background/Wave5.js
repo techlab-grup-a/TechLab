@@ -1,5 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import wave5 from "../../assets/waves/wave5.svg";
+import React from "react";
 
 export default function Wave5() {
   return <Wave />;
