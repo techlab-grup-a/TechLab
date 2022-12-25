@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Button, Card, CardGroup, Container, Row, Col } from "react-bootstrap";
-import Background from "../layout/Background";
-import Carousel from "react-bootstrap/Carousel";
+import { Modal, Button, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
-import ButtonToolbar from "react-bootstrap/ButtonToolbar";
-import Form from "react-bootstrap/Form";
+import axios from "axios";
 import styled from "styled-components";
+import DatePicker from "react-datepicker";
+
 
 const Maquines = ({ user }) => {
   const API_URL = "http://localhost:5000/";
