@@ -40,7 +40,10 @@ const LogIn = ({ handleSetUser, handleSetToken }) => {
       .then((res2) => {
         console.log('RESPONSE RECEIVED: ', res2);
         handleSetUser(res.profileObj);
-        handleSetToken(res.tokenObj);
+        // handleSetToken(res.tokenObj);
+        sessionStorage.setItem('token_type', res.tokenObj.token_type)
+        sessionStorage.setItem('access_token', res.tokenObj.access_token)
+        sessionStorage.setItem('id_token', res.tokenObj.id_token)
         refreshTokenSetup({ res, handleSetToken });
       })
       .catch((err) => {

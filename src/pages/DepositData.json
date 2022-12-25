@@ -1,0 +1,34 @@
+{
+    "active": [
+        {
+            "machine": {
+                "name": "Impressora 3D",
+                "imageUrl": "impressora.jpg"
+            },
+            "status": {
+                "message": "Disponible",
+                "level": 3 
+            }
+        },
+        {
+            "machine": {
+                "name": "Fresadora",
+                "imageUrl": "fresadora.png"
+            },
+            "status": {
+                "message": "Ocupada",
+                "level": 2 
+            }
+        },
+        {
+            "machine": {
+                "name": "Osciloscopi",
+                "imageUrl": "osciloscopi.jpg"
+            },
+            "status": {
+                "message": "En reparació",
+                "level": 1 
+            }
+        }
+    ]
+}

@@ -7,7 +7,9 @@ import LogOut from "../components/Auth/LogOut";
 import Modal from "react-bootstrap/Modal";
 import Background from "../layout/Background";
 
-const LoginPerfil = ({ user, handleSetUser, handleSetToken }) => {
+// const LoginPerfil = ({ user, handleSetUser, handleSetToken }) => {
+const LoginPerfil = ({ user, handleSetUser }) => {
+
   const navigate = useNavigate();
   const handleClose = () => navigate("/");
 
@@ -24,7 +26,7 @@ const LoginPerfil = ({ user, handleSetUser, handleSetToken }) => {
           <Modal.Footer>
             <LogIn
               handleSetUser={handleSetUser}
-              handleSetToken={handleSetToken}
+              // handleSetToken={handleSetToken}
             />
           </Modal.Footer>
         </Modal>
