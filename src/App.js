@@ -8,7 +8,7 @@ import NoPage from "./pages/NoPage";
 import Reserves from "./pages/Reserves";
 
 export default function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(true);
   const handleSetUser = (usr) => {
     console.log("[handleSetUser] User set to:", usr);
     setUser(usr);

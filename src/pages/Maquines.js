@@ -5,7 +5,6 @@ import axios from "axios";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 
-
 const Maquines = ({ user }) => {
   const API_URL = "http://localhost:5000/";
   // Universitats
@@ -22,7 +21,6 @@ const Maquines = ({ user }) => {
 
   // Reserva
   const [reserva, setReserva] = useState([]);
-  const [hores, setHores] = useState([]);
 
   useEffect(() => {
     axios
@@ -54,7 +52,8 @@ const Maquines = ({ user }) => {
         API_URL +
           `/res/?id_maq=${
             maquina.id
-          }&dia=${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`
+          }&dia=${date.getFullYear()}-${date.getMonth() +
+            1}-${date.getDate()}&id_usr=${user ? user.googleId : null}`
       )
       .then((res) => {
         console.log(res);
@@ -88,9 +87,9 @@ const Maquines = ({ user }) => {
   };
 
   const handleReservaHores = () => {
-    let token_type = sessionStorage.getItem('token_type');
-    let access_token = sessionStorage.getItem('access_token');
-    let id_token = sessionStorage.getItem('id_token');
+    let token_type = sessionStorage.getItem("token_type");
+    let access_token = sessionStorage.getItem("access_token");
+    let id_token = sessionStorage.getItem("id_token");
 
     console.log("Usuari: ", user);
     console.log("Token_Type: ", token_type);
@@ -98,27 +97,27 @@ const Maquines = ({ user }) => {
     console.log("Hores: ", reserva);
 
     const postConfig = {
-        headers: { Authorization: `${token_type} ${access_token}` }
+      headers: { Authorization: `${token_type} ${access_token}` },
     };
-    
+
     const postData = {
-        id_maq: maquina.id, 
-        id_usr: user.googleId,
-        dia: `${date.getDate()}-${date.getMonth()}-${date.getFullYear()}`,
-        hores: reserva,
-        id_token: id_token
+      id_maq: maquina.id,
+      id_usr: user.googleId,
+      dia: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+      hores: reserva,
+      id_token: id_token,
     };
 
-    axios.post(API_URL + '/res/', postData, postConfig)
-    .then((res) => {
-      console.log("RESPONSE RECEIVED: ", res);
-      setShowModal(false);
-      alert(`${maquina.nom} reservada`);
-    })
-    .catch((err) => {
-      console.log("AXIOS ERROR: ", err);
-    })
-
+    axios
+      .post(API_URL + "/res/", postData, postConfig)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        setShowModal(false);
+        alert(`${maquina.nom} reservada`);
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
   };
 
   return (
