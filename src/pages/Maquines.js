@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
+import {addMonths} from 'date-fns';
 
 const Maquines = ({ user }) => {
   const API_URL = "http://localhost:5000/";
@@ -137,8 +138,8 @@ const Maquines = ({ user }) => {
                   <Card.Title>{uni.nom}</Card.Title>
                   <Card.Text>{uni.info}</Card.Text>
                   <Button
-                    variant="primary"
                     value={uni.id}
+                    variant="primary"
                     onClick={(e) => {
                       console.log("Clicat: ", e.target.value);
                       setUniversitat(e.target.value);
@@ -164,6 +165,7 @@ const Maquines = ({ user }) => {
         <Row xs={1} md={4} className="g-8">
           {maquines.map((maq, idx) => (
             <Col>
+
               <Card>
                 <Card.Body
                   style={{
@@ -191,6 +193,7 @@ const Maquines = ({ user }) => {
                   </Button>
                 </Card.Body>
               </Card>
+              
             </Col>
           ))}
         </Row>
@@ -205,6 +208,8 @@ const Maquines = ({ user }) => {
               <DatePicker
                 wrapperClassName="DatePicker"
                 selected={date}
+                minDate={new Date()}
+                maxDate={addMonths(new Date(), 2)}
                 onChange={(date) => {
                   console.log(date);
                   setDate(date);

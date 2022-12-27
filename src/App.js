@@ -8,7 +8,8 @@ import NoPage from "./pages/NoPage";
 import Reserves from "./pages/Reserves";
 
 export default function App() {
-  const [user, setUser] = useState(true);
+  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const handleSetUser = (usr) => {
     console.log("[handleSetUser] User set to:", usr);
     setUser(usr);
@@ -19,7 +20,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HeaderNavBar user={user}/>}>
           <Route index element={<Home />} />
-          {user && <Route path="reserves" element={<Reserves />} />}
+          {user && <Route path="reserves" element={<Reserves user={user}/>} />}
           <Route 
             path="maquines" 
             element={<Maquines user={user}/>} />
@@ -38,3 +39,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+Corrent: {}
