@@ -21,7 +21,8 @@ const LogOut = ({ handleSetUser }) => {
       buttonText="LogOut"
       onLogoutSuccess={onSuccess}
       style={{
-        marginTop: "100px",
+        // marginTop: "100px",
+        width: "100%"
       }}
     />
   );

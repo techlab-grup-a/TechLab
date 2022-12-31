@@ -8,7 +8,6 @@ import NoPage from "./pages/NoPage";
 import Reserves from "./pages/Reserves";
 
 export default function App() {
-  // const [user, setUser] = useState(null);
   const [user, setUser] = useState(null);
   const handleSetUser = (usr) => {
     console.log("[handleSetUser] User set to:", usr);
@@ -39,5 +38,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-Corrent: {}

@@ -4,7 +4,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
-import {addMonths} from 'date-fns';
+import { addMonths } from "date-fns";
+import Background from "../layout/Background";
+import { color } from "@mui/system";
 
 const Maquines = ({ user }) => {
   const API_URL = "http://localhost:5000/";
@@ -48,13 +50,17 @@ const Maquines = ({ user }) => {
   }, [universitat]);
 
   useEffect(() => {
+    let id_token = sessionStorage.getItem("id_token");
+
     axios
       .get(
         API_URL +
           `/res/?id_maq=${
             maquina.id
           }&dia=${date.getFullYear()}-${date.getMonth() +
-            1}-${date.getDate()}&id_usr=${user ? user.googleId : null}`
+            1}-${date.getDate()}&id_usr=${
+            user ? user.googleId : null
+          }&id_token=${id_token}`
       )
       .then((res) => {
         console.log(res);
@@ -122,126 +128,130 @@ const Maquines = ({ user }) => {
   };
 
   return (
-    <div
-      style={{
-        margin: "20px",
-      }}
-    >
-      <h1>Universitats</h1>
-      {/* <Background /> */}
-      <div>
-        <Row xs={1} md={2} className="g-4">
-          {universitats.map((uni, idx) => (
-            <Col>
-              <Card>
-                <Card.Body>
-                  <Card.Title>{uni.nom}</Card.Title>
-                  <Card.Text>{uni.info}</Card.Text>
-                  <Button
-                    value={uni.id}
-                    variant="primary"
-                    onClick={(e) => {
-                      console.log("Clicat: ", e.target.value);
-                      setUniversitat(e.target.value);
-                    }}
-                  >
-                    Buscar
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
+    <div style={{ margin: "0px" }}>
+      <Background />
 
-      <h1>Maquines</h1>
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-around",
-          alignItems: "center",
+          margin: "20px",
         }}
       >
-        <Row xs={1} md={4} className="g-8">
-          {maquines.map((maq, idx) => (
-            <Col>
+        {/* <h1>Universitats</h1> */}
 
-              <Card>
-                <Card.Body
-                  style={{
-                    alignItems: "center",
-                  }}
-                >
-                  <Card.Img
+        <div>
+          <Row xs={1} md={3} className="g-4">
+            {universitats.map((uni, idx) => (
+              <Col>
+                <Card>
+                  <Card.Body>
+                    <Card.Title>{uni.nom}</Card.Title>
+                    <Card.Text>{uni.info}</Card.Text>
+                    <Button
+                      value={uni.id}
+                      variant="primary"
+                      onClick={(e) => {
+                        console.log("Clicat: ", e.target.value);
+                        setUniversitat(e.target.value);
+                      }}
+                    >
+                      Buscar
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
+
+        {/* <h1>Maquines</h1> */}
+
+        <div
+          style={{
+            margin: "20px",
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+          }}
+        >
+          <Row xs={1} md={4} className="g-4">
+            {maquines.map((maq, idx) => (
+              <Col>
+                <Card>
+                  <Card.Body
                     style={{
-                      maxWidth: "250px",
+                      alignItems: "center",
                     }}
-                    variant="top"
-                    src={require(`../assets/maquines/${maq.image_url}`)}
-                  />
-                  <Card.Title>{maq.nom}</Card.Title>
-                  <Card.Text>{maq.id_lab}</Card.Text>
-
-                  <Button
-                    className="rounded-pill w-100"
-                    variant="primary"
-                    id={maq.id}
-                    value={maq.nom}
-                    onClick={(e) => handleReservaMaquina(e.target)}
                   >
-                    Reservar
-                  </Button>
-                </Card.Body>
-              </Card>
-              
-            </Col>
-          ))}
-        </Row>
+                    <Card.Img
+                      style={{
+                        maxWidth: "250px",
+                      }}
+                      variant="top"
+                      src={require(`../assets/maquines/${maq.image_url}`)}
+                    />
+                    <Card.Title>{maq.nom}</Card.Title>
+                    <Card.Text>{maq.id_lab}</Card.Text>
 
-        {showModal && (
-          <Modal show onHide={handleClose} centered>
-            <Modal.Header closeButton>
-              <Modal.Title> {maquina.nom}</Modal.Title>
-            </Modal.Header>
+                    <Button
+                      className="rounded-pill w-100"
+                      variant="primary"
+                      id={maq.id}
+                      value={maq.nom}
+                      onClick={(e) => handleReservaMaquina(e.target)}
+                    >
+                      Reservar
+                    </Button>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
 
-            <Modal.Body>
-              <DatePicker
-                wrapperClassName="DatePicker"
-                selected={date}
-                minDate={new Date()}
-                maxDate={addMonths(new Date(), 2)}
-                onChange={(date) => {
-                  console.log(date);
-                  setDate(date);
-                }}
-                dateFormat="MMMM d, yyyy"
-              />
+          {showModal && (
+            <Modal show onHide={handleClose} centered>
+              <Modal.Header closeButton>
+                <Modal.Title> {maquina.nom}</Modal.Title>
+              </Modal.Header>
 
-              <Graella>
-                {reserva.map((resv, indx) => (
-                  <Button
-                    id={resv.hora}
-                    variant={resv.ocupada ? "primary" : "outline-primary"}
-                    className="w-100"
-                    onClick={() => handleHora(indx)}
-                  >
-                    {resv.hora}
-                  </Button>
-                ))}
-              </Graella>
-            </Modal.Body>
+              <Modal.Body>
+                <DatePicker
+                  wrapperClassName="DatePicker"
+                  selected={date}
+                  minDate={new Date()}
+                  maxDate={addMonths(new Date(), 2)}
+                  onChange={(date) => {
+                    console.log(date);
+                    setDate(date);
+                  }}
+                  dateFormat="MMMM d, yyyy"
+                />
 
-            <Modal.Footer>
-              <Button
-                className="rounded-pill w-100"
-                variant="primary"
-                onClick={handleReservaHores}
-              >
-                Reservar
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        )}
+                <Graella>
+                  {reserva.map((resv, indx) => (
+                    <Button
+                      id={resv.hora}
+                      variant={resv.ocupada ? "primary" : "outline-primary"}
+                      className="w-100"
+                      onClick={() => handleHora(indx)}
+                    >
+                      {resv.hora}
+                    </Button>
+                  ))}
+                </Graella>
+              </Modal.Body>
+
+              <Modal.Footer>
+                <Button
+                  className="rounded-pill w-100"
+                  variant="primary"
+                  onClick={handleReservaHores}
+                >
+                  Reservar
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )}
+        </div>
       </div>
     </div>
   );
