@@ -4,7 +4,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 
 
-const HeaderNavBar = ({user}) => {
+const HeaderNavBar = ({user,admin}) => {
   const expand = "xl";
   
   return (
@@ -31,7 +31,11 @@ const HeaderNavBar = ({user}) => {
                 Reserves
               </Nav.Link>
               }
-              <Nav.Link eventKey="4" as={Link} to={"/perfil"}>
+              {admin && <Nav.Link eventKey="4" as={Link} to={"/admin"}>
+                Administrador
+              </Nav.Link>
+              } 
+              <Nav.Link eventKey="5" as={Link} to={"/perfil"}>
                 <FaUserCircle size={24} color={"white"} opacity={0.6} />
               </Nav.Link>
             </Nav>
