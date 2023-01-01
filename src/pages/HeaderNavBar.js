@@ -4,7 +4,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 
 
-const HeaderNavBar = ({user,admin}) => {
+const HeaderNavBar = ({user, admin}) => {
   const expand = "xl";
   
   return (

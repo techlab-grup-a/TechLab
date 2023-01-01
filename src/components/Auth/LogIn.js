@@ -21,8 +21,6 @@ const LogIn = ({ handleSetUser, handleSetToken }) => {
   const onSuccess = (res) => {
     console.log("[Login OK]");
     console.log(res.profileObj);
-    console.log(res);
-
 
     var postData = {
       id_usr: res.profileObj.googleId,
