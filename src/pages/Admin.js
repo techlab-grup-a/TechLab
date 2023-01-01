@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { Modal, Button, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
-import { MDBBadge, MDBBtn } from "mdb-react-ui-kit";
+import { MDBBadge, MDBBtn, MDBIcon } from "mdb-react-ui-kit";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { solid } from '@fortawesome/fontawesome-svg-core/import.macro'
+import { TextField, MenuItem, InputLabel  } from '@mui/material';
 
 import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
+import { tableBodyClasses } from "@mui/material";
 
 const Admin = ({ user }) => {
   const API_URL = "http://localhost:5000/";
@@ -19,14 +23,41 @@ const Admin = ({ user }) => {
   const [maquines, setMaquines] = useState([]);
 
   // Control
-  // const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [date, setDate] = React.useState(new Date());
 
   // Usuari(s)
   const [usuaris, setUsuaris] = useState([]);
+  const [usuari, setUsuari] = useState({id:"", nom_complert:"", email:"", role:"", auth:"", nfcid:""});
+
 
   // Reserv(es)
   const [reserva, setReserva] = useState([]);
+
+/*   const authorization = [
+    {
+      value:1,
+      label:1
+    },
+    {
+      value:2,
+      label:2
+    },    
+    {
+      value:3,
+      label:3
+    },
+    {
+      value:4,
+      label:4
+    },
+    {
+      value:5,
+      label:5
+    },
+  ];
+
+ */
 
   useEffect(() => {
     let id_token = sessionStorage.getItem("id_token");
@@ -74,6 +105,44 @@ const Admin = ({ user }) => {
   }, [date, maquina]);
 
   const navigate = useNavigate();
+
+  const handlemModifyData = (usuari) => {
+    console.log(usuari);
+    setShowModal(true);
+    setUsuari({ id: usuari.id, nom: usuari.nom_complert, email: usuari.email, role:usuari.role, auth:usuari.auth, nfcid:usuari.nfcid });
+    console.log('Usuari: ', usuari, usuari.id, usuari.nom_complert, usuari.email, usuari.role, usuari.auth, usuari.nfcid);
+    console.log("ZZZZZZZZZZZZZZZZZZZZZZZ");
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const inputAuth = useRef(null);
+  const inputNFCID = useRef(null);
+
+  function handleClick() {
+    console.log("Auth: ", inputAuth.current.value);
+    console.log("NFCID: ", inputNFCID.current.value);
+
+    const postData = {
+      auth: usuari.auth,
+      nfcid: usuari.nfcid,
+    };
+
+    axios
+      .post(API_URL + "/usr/", postData)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        setShowModal(false);
+        alert(`${usuari.nom_complert} actualitzat`);
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+  };
+
+
   // const handleReservaMaquina = (maq) => {
   //   console.log(user);
   //   if (!user) {
@@ -196,14 +265,12 @@ const Admin = ({ user }) => {
                   <Status>
                     {(() => {
                       switch (maq.status) {
-                        case 1:
-                          return <StatusIndicator color="#F17E7E" />;
-                        case 2:
-                          return <StatusIndicator color="#FFD056" />;
-                        case 3:
-                          return <StatusIndicator color="#75C282" />;
+                        case false:
+                          return <StatusIndicator color="#F17E7E" />; //vermell
+                        case true:
+                          return <StatusIndicator color="#75C282" />; //verd
                         default:
-                          return <StatusIndicator color="#AAA5A5" />;
+                          return <StatusIndicator color="#FFD056" />; //groc
                       }
                     })()}
                   </Status>
@@ -217,30 +284,84 @@ const Admin = ({ user }) => {
       <h1>Usuaris</h1>
       <div>
         <MDBTable>
-          <MDBTableHead>
+          <MDBTableHead class="table-dark">
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Nom</th>
-              <th scope="col">Mail</th>
-              <th scope="col">Rol</th>
-              <th scope="col">Auth </th>
-              <th scope="col">NFCID </th>
+              <th scope="col">ID</th>
+              <th scope="col">NOM</th>
+              <th scope="col">MAIL</th>
+              <th scope="col">ROL</th>
+              <th scope="col">AUTH</th>
+              <th scope="col">NFCID</th>
+              <th scope="col">EDITA</th>
             </tr>
           </MDBTableHead>
           <MDBTableBody>
             {usuaris.map((usuari, indx) => (
               <tr>
-                <th scope="row">{usuari.id_usr}</th>
+                <th scope="row">{indx}</th>
+                <td>{usuari.id}</td>
                 <td>{usuari.nom_complert}</td>
-                <td>{usuari.mail}</td>
+                <td>{usuari.email}</td>
                 <td>{usuari.role}</td>
                 <td>{usuari.auth}</td>
-                <td>{usuari.nfc_id}</td>
+                <td>{usuari.nfcid}</td>
+                <td>
+                  <button  onClick={(e) => handlemModifyData(usuari)}>
+                    <i><FontAwesomeIcon icon={solid('edit')} /></i>
+                  </button>
+                </td>
               </tr>
             ))}
           </MDBTableBody>
         </MDBTable>
       </div>
+      {showModal && (
+        <Modal show onHide={handleClose} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>{usuari.nom}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div class="mt-3">
+              <div class="form-outline form-white mt-3">
+                <input ref={inputAuth} type="text" id="formWhite" class="form-control" />
+                <label class="form-label" for="formWhite"  >AUTH</label>
+              </div>
+{/*               <TextField
+                ref={inputAuth}
+                id="auth"
+                select
+                label="AUTH"
+                defaultValue={usuari.auth}
+              >
+                {authorization.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.value}
+                  </MenuItem>
+                ))}
+              </TextField> */}
+            </div>
+            <div class="mt-3" >
+              <div class="form-outline form-white mt-3">
+                <input ref={inputNFCID} type="text" id="formWhite" class="form-control" />
+                <label class="form-label" for="formWhite"  >NFCID</label>
+              </div>
+            </div>
+
+{/*             <div class="mt-3"><TextField id="nfcid" type="text" label="NFCID" defaultValue={usuari.nfcid} variant="standard" /></div>
+ */}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              className="rounded-pill w-100"
+              variant="primary"
+              onClick={handleClick}
+            >
+              Acceptar canvis
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 };
