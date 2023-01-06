@@ -8,6 +8,7 @@ import {
   Col,
   ProgressBar,
   Modal,
+  InputGroup
 } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +40,17 @@ const Reserves = ({ user }) => {
         console.log("AXIOS ERROR: ", err);
       });
   }, []);
+
+
+  const handleActivaPinMaquina = (id_maq){
+
+  }
+
+  const handleCancelaReserva = (usuari, rang) {
+    
+  }
+
+
 
   if (reserves != null) {
     return (
@@ -84,15 +96,22 @@ const Reserves = ({ user }) => {
                     }}
                     sm={5}
                   >
-                    <Form.Control
-                      style={{ margin: "0px 0px 20px 0px" }}
-                      type="text"
-                      placeholder="PIN"
-                      aria-label="Disabled input example"
-                      disabled={resv["pin_actiu"]}
-                      // readOnly
-                    />
+                  
+                    <InputGroup>
+                      <Form.Control
+                        style={{ margin: "0px 0px 20px 0px" }}
+                        type="text"
+                        placeholder="PIN"
+                        disabled={resv["pin_actiu"]}
+                        pattern='^[0-9][0-9][0-9][0-9][0-9][a-z0-9]$'
+                        onChange={(e) => {
+                          setPin(e.target.value);
+                        }}
+                        />
+                    </InputGroup>
+
                     <Button
+                      onClick={() => console.log('holaaaa')}
                       disabled={resv["pin_actiu"]}
                       style={{
                         margin: "0px 0px 10px 0px",
@@ -103,6 +122,7 @@ const Reserves = ({ user }) => {
                     >
                       Activa
                     </Button>
+
                     <Button
                       style={{
                         margin: "0px 0px 10px 0px",
@@ -113,7 +133,7 @@ const Reserves = ({ user }) => {
                     >
                       Cancel·lar
                     </Button>
-                    {/* <ProgressBar variant="primary" animated now={45} /> */}
+                    
                   </Col>
                 </Row>
               </Card.Body>

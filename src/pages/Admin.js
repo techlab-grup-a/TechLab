@@ -70,7 +70,6 @@ const Admin = ({ user }) => {
       .then((res) => {
         setMaquines(res.data);
         console.log(res.data);
-        console.log('MAQUINESKJLFKLEJGHLKSJFDHGKLJHSFDGLK');
       })
       .catch((err) => {
         console.log(err);
@@ -83,7 +82,6 @@ const Admin = ({ user }) => {
     axios
       .get(API_URL + `/usr/?id_token=${id_token}`)
       .then((res) => {
-        console.log("USUARIIIIIIIIIIIIIIIS");
         console.log(res);
         setUsuaris(res.data);
       })
@@ -109,26 +107,31 @@ const Admin = ({ user }) => {
   };
 
   function handleClickPutUser() {
-    let id_token = sessionStorage.getItem("id_token");
-    
-    const putData = {
-      id_token: id_token,
-      id_usr: usuari.id,
-      auth: auth,
-      nfc_id: nfc_id
-    };
+    const pattern = new RegExp("^$|[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$");
+    if (pattern.test(nfc_id)) {
+      let id_token = sessionStorage.getItem("id_token");
+      
+      const putData = {
+        id_token: id_token,
+        id_usr: usuari.id,
+        auth: auth,
+        nfc_id: nfc_id
+      };
 
-    axios
-      .put(API_URL + "/usr/", putData)
-      .then((res) => {
-        console.log("RESPONSE RECEIVED: ", res);
-        setShowModal(false);
-        alert('Usuari actualitzat');
-        setRefechUsuaris(!refetchUsuaris)
-      })
-      .catch((err) => {
-        console.log("AXIOS ERROR: ", err);
-      });
+      axios
+        .put(API_URL + "/usr/", putData)
+        .then((res) => {
+          console.log("RESPONSE RECEIVED: ", res);
+          setShowModal(false);
+          alert('Usuari actualitzat');
+          setRefechUsuaris(!refetchUsuaris)
+        })
+        .catch((err) => {
+          console.log("AXIOS ERROR: ", err);
+        });
+    } else {
+      alert('Format incorrecte');
+    }
   }
 
 
@@ -208,7 +211,6 @@ const Admin = ({ user }) => {
                 key={usuari.id}
                 onClick={(e) => {
                   handleModifyData(usuari);
-                  console.log('holaaaaa:', usuari)
                 }}
                 >
                   <th scope="row">{indx}</th>
@@ -260,18 +262,15 @@ const Admin = ({ user }) => {
 
               </Container>
 
-              
-              <Form style={{margin: "20px 0px 20px 0px"}}>
-                <InputGroup>
+                <InputGroup style={{margin: "20px 0px 20px 0px"}}>
                   <Form.Control
                     onChange={(e) => {
                       setNfcId(e.target.value);
                     }}
                     placeholder="NFC_ID"
-                    pattern="^[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$"
                   />
                 </InputGroup>
-              </Form>
+
             </Modal.Body>
             <Modal.Footer>
               <Button
