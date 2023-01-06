@@ -1,8 +1,7 @@
 {
-  "homepage":"https://techlab-grup-a.github.io/TechLab/",
-  "start_url": ".",
   "name": "tech-lab",
   "version": "0.1.0",
+  "homepage":"https://techlab-grup-a.github.io/TechLab/",
   "private": true,
   "proxy": "http://localhost:3000/",
   "dependencies": {
