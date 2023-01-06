@@ -1,3 +1,4 @@
+import API_URL from "../services/config";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
@@ -9,25 +10,21 @@ import {
   Dropdown,
   DropdownButton,
   Badge,
-  Row,
-  Col
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
-import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
-import { MDBBadge, MDBBtn, MDBIcon } from "mdb-react-ui-kit";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
-import { TextField, MenuItem, InputLabel } from "@mui/material";
+// import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
+// import { MDBBadge, MDBBtn, MDBIcon } from "mdb-react-ui-kit";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
+// import { TextField, MenuItem, InputLabel } from "@mui/material";
 
-import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
-import { tableBodyClasses } from "@mui/material";
+// import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
+// import { tableBodyClasses } from "@mui/material";
 
 const Admin = ({ user }) => {
-  const API_URL = "http://localhost:5000/";
-
   // Usuari(s)
   const [usuaris, setUsuaris] = useState([]);
   const [usuari, setUsuari] = useState({
@@ -150,11 +147,11 @@ const Admin = ({ user }) => {
   }
 
   const handleSelectAuth = (e) => {
-    if (e == 'auth-1') {
+    if (e === 'auth-1') {
       setAuth(1);
-    } else if (e == 'auth-2') {
+    } else if (e === 'auth-2') {
       setAuth(2);
-    } else if (e == 'auth-3') {
+    } else if (e === 'auth-3') {
       setAuth(3);
     }
   };

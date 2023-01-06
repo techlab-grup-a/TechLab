@@ -1,3 +1,4 @@
+import API_URL from "../services/config";
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Card, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +7,9 @@ import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import { addMonths } from "date-fns";
 import Background from "../layout/Background";
-import { color } from "@mui/system";
+
 
 const Maquines = ({ user }) => {
-  const API_URL = "http://localhost:5000/";
   // Universitats
   const [universitat, setUniversitat] = useState({});
   const [universitats, setUniversitats] = useState([]);

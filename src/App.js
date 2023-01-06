@@ -1,3 +1,4 @@
+import API_URL from "./services/config";
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HeaderNavBar from "./pages/HeaderNavBar";
@@ -11,7 +12,6 @@ import Admin from "./pages/Admin";
 import axios from "axios";
 
 export default function App() {
-  const API_URL = "http://localhost:5000";
   const [admin, setAdmin] = useState(false);
   const [user, setUser] = useState(null);
   const handleSetUser = (usr) => {
@@ -26,7 +26,7 @@ export default function App() {
       axios
         .get(API_URL + `/usr/?id_usr=${user.googleId}&id_token=${id_token}`)
         .then((res) => {
-          setAdmin(res.data["role"] == "admin");
+          setAdmin(res.data["role"] === "admin");
         })
         .catch((err) => {
           console.log(err);

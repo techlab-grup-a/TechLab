@@ -11,9 +11,9 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../services/config";
 
 const Reserves = ({ user }) => {
-  const API_URL = "http://localhost:5000/";
   const [reserves, setReserves] = useState([]);
   const [pin, setPin] = useState("");
 
