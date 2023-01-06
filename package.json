@@ -1,5 +1,6 @@
 {
   "homepage":"https://github.com/techlab-grup-a/TechLab",
+  "start_url": ".",
   "name": "tech-lab",
   "version": "0.1.0",
   "private": true,
