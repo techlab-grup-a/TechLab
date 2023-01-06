@@ -1,3 +1,4 @@
+import API_URL from "../../services/config";
 import React, { useEffect } from "react";
 import { GoogleLogin } from "react-google-login";
 import { gapi } from "gapi-script";
@@ -5,8 +6,6 @@ import { refreshTokenSetup } from "../../services/refreshTokenSetup";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 // import { useNavigate } from "react-router-dom";
-
-const API_URL = 'http://localhost:5000';
 
 const LogIn = ({ handleSetUser, handleSetToken }) => {
   const clientId = "455738767873-gvb4qamkrjv3bqf91odopf7ft0c0tcvp.apps.googleusercontent.com";
