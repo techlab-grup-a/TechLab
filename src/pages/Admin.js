@@ -1,3 +1,15 @@
+// import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
+// window.onload = function() {
+//   console.log('adeuuuu')
+
+// };
+
+// if(sessionStorage.reload && history.location.pathname!=='/') {
+//   console.log(this.props);
+//     sessionStorage.reload = "";
+//     history.push('/');
+//   }
+
 import API_URL from "../services/config";
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -10,21 +22,17 @@ import {
   Dropdown,
   DropdownButton,
   Badge,
+  Card,
+  Row,
+  Col
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
-// import { MDBTable, MDBTableHead, MDBTableBody } from "mdb-react-ui-kit";
-// import { MDBBadge, MDBBtn, MDBIcon } from "mdb-react-ui-kit";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { solid } from "@fortawesome/fontawesome-svg-core/import.macro";
-// import { TextField, MenuItem, InputLabel } from "@mui/material";
-
-// import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
-// import { tableBodyClasses } from "@mui/material";
 
 const Admin = ({ user }) => {
+  const SECRET_API = "54d23618-9e0b-4574-a3e0-f7c8131d362f"
   // Usuari(s)
   const [usuaris, setUsuaris] = useState([]);
   const [usuari, setUsuari] = useState({
@@ -48,12 +56,26 @@ const Admin = ({ user }) => {
   const [reserva, setReserva] = useState([]);
 
   // Búsqueda
-  const [search, setSearch] = useState('');
+  const [searchUsuaris, setSearchUsuaris] = useState('');
+  const [searchMaquines, setSearchMaquines] = useState('');
 
   // Dades usuari
   const [auth, setAuth] = useState('');
   const [nfc_id, setNfcId] = useState('');
+  const [refetchUsuaris, setRefechUsuaris] = useState(false);
 
+  useEffect(() => {
+    axios
+      .get(API_URL + `/maq/`)
+      .then((res) => {
+        setMaquines(res.data);
+        console.log(res.data);
+        console.log('MAQUINESKJLFKLEJGHLKSJFDHGKLJHSFDGLK');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     let id_token = sessionStorage.getItem("id_token");
@@ -68,33 +90,11 @@ const Admin = ({ user }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(
-        API_URL +
-          `/res/?id_maq=${
-            maquina.id
-          }&dia=${date.getFullYear()}-${date.getMonth() +
-            1}-${date.getDate()}&id_usr=${user ? user.googleId : null}`
-      )
-      .then((res) => {
-        console.log(res);
-        setReserva(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [date, maquina]);
-
-  const navigate = useNavigate();
+  }, [refetchUsuaris]);
 
   const handleModifyData = (usuari) => {
-    console.log(usuari);
-
     setShowModal(true);
-
+    
     setAuth(usuari.auth);
     setNfcId(usuari.nfcid);
 
@@ -106,44 +106,49 @@ const Admin = ({ user }) => {
       auth: usuari.auth,
       nfcid: usuari.nfcid,
     });
-    console.log(
-      "Usuari: ",
-      usuari,
-      usuari.id,
-      usuari.nom_complert,
-      usuari.email,
-      usuari.role,
-      usuari.auth,
-      usuari.nfcid
-    );
   };
 
-  const handleClose = () => {
-    setShowModal(false);
-  };
-
-  const inputAuth = useRef(null);
-  const inputNFCID = useRef(null);
-
-  function handleClick() {
-    console.log("Auth: ", inputAuth.current.value);
-    console.log("NFCID: ", inputNFCID.current.value);
-
-    const postData = {
-      auth: usuari.auth,
-      nfcid: usuari.nfcid,
+  function handleClickPutUser() {
+    let id_token = sessionStorage.getItem("id_token");
+    
+    const putData = {
+      id_token: id_token,
+      id_usr: usuari.id,
+      auth: auth,
+      nfc_id: nfc_id
     };
 
     axios
-      .post(API_URL + "/usr/", postData)
+      .put(API_URL + "/usr/", putData)
       .then((res) => {
         console.log("RESPONSE RECEIVED: ", res);
         setShowModal(false);
-        alert(`${usuari.nom_complert} actualitzat`);
+        alert('Usuari actualitzat');
+        setRefechUsuaris(!refetchUsuaris)
       })
       .catch((err) => {
         console.log("AXIOS ERROR: ", err);
       });
+  }
+
+
+  const handleRunMaquina = (id_maquina, run) => {
+    const putData = {
+      secret: SECRET_API,
+      id_maq: id_maquina,
+      run: run,
+    };
+
+    axios
+      .put(API_URL + "/maq/", putData)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        alert('Resposta exitosa');
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+    
   }
 
   const handleSelectAuth = (e) => {
@@ -156,296 +161,227 @@ const Admin = ({ user }) => {
     }
   };
 
+  const handleClose = () => {
+    setShowModal(false);
+  };
  
 
-  // window.onload = function() {
-  //   console.log('adeuuuu')
 
-  // };
-
-  // if(sessionStorage.reload && history.location.pathname!=='/') {
-  //   console.log(this.props);
-  //     sessionStorage.reload = "";
-  //     history.push('/');
-  //   }
 
   return (
     <Container>
-      <Form>
-        <InputGroup>
-          <Form.Control
-            onChange={(e) => {
-              setSearch(e.target.value);
-              console.log(e.target.value);
-            }}
-            placeholder="Buscar"
-          />
-        </InputGroup>
-      </Form>
-
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th></th>
-            {/* <th>Id</th> */}
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Rol</th>
-            <th>Auth</th>
-            <th>NFC_ID</th>
-            {/* <th>EDITA</th> */}
-          </tr>
-        </thead>
-
-        <tbody>
-          {usuaris
-            .filter((usuari) => {
-              return search.toLowerCase() === ""
-                ? usuari
-                : usuari.nom_complert
-                    .toLowerCase()
-                    .includes(search.toLocaleLowerCase());
-            })
-            .map((usuari, indx) => (
-              <tr 
-              key={usuari.id}
-              onClick={(e) => {
-                handleModifyData(usuari);
-                console.log('holaaaaa:', usuari)
+      <Container>
+        <Form style={{margin: "20px 0px 20px 0px"}}>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) => {
+                setSearchUsuaris(e.target.value);
               }}
+              placeholder="Buscar"
+            />
+          </InputGroup>
+        </Form>
+
+        <Table striped bordered hover responsive>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Auth</th>
+              <th>NFC_ID</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {usuaris
+              .filter((usuari) => {
+                return searchUsuaris.toLowerCase() === ""
+                  ? usuari
+                  : usuari.nom_complert
+                      .toLowerCase()
+                      .includes(searchUsuaris.toLocaleLowerCase());
+              })
+              .map((usuari, indx) => (
+                <tr 
+                key={usuari.id}
+                onClick={(e) => {
+                  handleModifyData(usuari);
+                  console.log('holaaaaa:', usuari)
+                }}
+                >
+                  <th scope="row">{indx}</th>
+                  <td>{usuari.nom_complert}</td>
+                  <td>{usuari.email}</td>
+                  <td>{usuari.role}</td>
+                  <td>{usuari.auth}</td>
+                  <td>{usuari.nfcid}</td>
+                </tr>
+              ))}
+          </tbody>
+        </Table>
+
+
+        {showModal && (
+          <Modal show onHide={handleClose} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>{usuari.nom}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+
+
+              <Container style={{display: 'flex', flexDirection: 'row', alignItems: 'center', columnGap: '20px'}}>
+
+              <DropdownButton
+                title="Auth"
+                variant="outline-primary"
+                onSelect={handleSelectAuth}
+                >
+                <Dropdown.Item eventKey="auth-1">1</Dropdown.Item>
+                <Dropdown.Item eventKey="auth-2">2</Dropdown.Item>
+                <Dropdown.Item eventKey="auth-3">3</Dropdown.Item>
+              </DropdownButton>
+
+
+
+                {(() => {
+                  switch (auth) {
+                    case 1:
+                      return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"success"}> {auth} </Badge>;
+                    case 2:
+                      return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"danger"}> {auth} </Badge>;
+                      case 3:
+                        return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"primary"}> {auth} </Badge>;
+                        default:
+                          return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"warning"}> {auth} </Badge>;
+                        }
+                      })()}
+
+              </Container>
+
+              
+              <Form style={{margin: "20px 0px 20px 0px"}}>
+                <InputGroup>
+                  <Form.Control
+                    onChange={(e) => {
+                      setNfcId(e.target.value);
+                    }}
+                    placeholder="NFC_ID"
+                    pattern="^[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$"
+                  />
+                </InputGroup>
+              </Form>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                className="rounded-pill w-100"
+                variant="primary"
+                onClick={handleClickPutUser}
               >
-                <th scope="row">{indx}</th>
-                <td>{usuari.nom_complert}</td>
-                <td>{usuari.email}</td>
-                <td>{usuari.role}</td>
-                <td>{usuari.auth}</td>
-                <td>{usuari.nfcid}</td>
-              </tr>
-            ))}
-        </tbody>
-      </Table>
+                Modificar
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        )}
 
 
-      {showModal && (
-        <Modal show onHide={handleClose} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>{usuari.nom}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+      </Container>
 
+      <Container style={{marginBottom: "20px"}}>
+        <Form>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) => {
+                setSearchMaquines(e.target.value);
+              }}
+              placeholder="Buscar"
+            />
+          </InputGroup>
+        </Form>
 
-            <Container style={{display: 'flex', flexDirection: 'row', alignItems: 'center', columnGap: '20px'}}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+          }}
+        >
+          <Row xs={1} md={4} className="g-8">
+            {maquines
+              .filter((maq) => {
+                return searchMaquines.toLowerCase() === ""
+                  ? maq
+                  : maq.nom_uni
+                      .toLowerCase()
+                      .includes(searchMaquines.toLocaleLowerCase());
+              })
+              .map((maq, idx) => (
+              <Col>
+                <Card style={{marginTop: "20px"}}>
+                  <Card.Body
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Card.Img
+                      style={{
+                        maxWidth: "250px",
+                      }}
+                      variant="top"
+                      src={require(`../assets/maquines/${maq.image_url}`)}
+                    />
+                    <Card.Title>{maq.nom}</Card.Title>
+                    <Card.Text>
+                      {maq.id_lab} <br/>
+                      <b><i>Auth:</i></b> {maq.auth_min} <br/>
+                      <b><i>Corrent:</i></b> {maq.corrent}
+                    </Card.Text>
 
-            <DropdownButton
-              title="Auth"
-              variant="outline-primary"
-              onSelect={handleSelectAuth}
-              >
-              <Dropdown.Item eventKey="auth-1">1</Dropdown.Item>
-              <Dropdown.Item eventKey="auth-2">2</Dropdown.Item>
-              <Dropdown.Item eventKey="auth-3">3</Dropdown.Item>
-            </DropdownButton>
+                    <Button
+                      onClick={() => handleRunMaquina(maq.id, true)}
+                      style={{marginBottom: "10px"}}
+                      className="rounded-pill w-100"
+                      variant="primary"
+                      id={maq.id}
+                      value={maq.nom}
+                    >
+                      Activar
+                    </Button>
 
+                    <Button
+                      onClick={() => handleRunMaquina(maq.id, false)}
+                      className="rounded-pill w-100"
+                      variant="danger"
+                      id={maq.id}
+                      value={maq.nom}
+                    >
+                      Desactivar
+                    </Button>
 
-
-              {(() => {
-                switch (auth) {
-                  case 1:
-                    return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"success"}> {auth} </Badge>;
-                  case 2:
-                    return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"danger"}> {auth} </Badge>;
-                    case 3:
-                      return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"primary"}> {auth} </Badge>;
-                      default:
-                        return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"warning"}> {auth} </Badge>;
+                  </Card.Body>
+                  <Card.Footer>
+                  {(() => {
+                      let currentTimestamp = new Date();
+                      let difference = currentTimestamp - maq.status;
+                      if ( (difference / (1000 * 60)) > 5) {
+                        return <Badge style={{width: "100px", heigth: '20px'}} pill bg={"warning"}> Unreachable </Badge>;
+                      }  else {
+                        return <Badge style={{width: "100px", heigth: '20px'}} pill bg={"primary"}> Ok </Badge>;
                       }
-                    })()}
+                      })()}
+                  </Card.Footer>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
 
-            </Container>
-
-            
-            <Form style={{margin: "20px 0px 20px 0px"}}>
-              <InputGroup>
-                <Form.Control
-                  onChange={(e) => {
-                    // setSearch(e.target.value);
-                    console.log(e.target.value);
-                  }}
-                  placeholder="NFC_ID"
-                />
-              </InputGroup>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              className="rounded-pill w-100"
-              variant="primary"
-              onClick={handleClick}
-            >
-              Modificar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      )}
+        </Container>
     </Container>
   );
-
-  //   return (
-  //     <div
-  //       style={{
-  //         margin: "20px",
-  //       }}
-  //     >
-  //       <h1>Maquines</h1>
-  //       <div
-  //         style={{
-  //           display: "flex",
-  //           justifyContent: "space-around",
-  //           alignItems: "center",
-  //         }}
-  //       >
-  //         <Row xs={1} md={4} className="g-8">
-  //           {maquines.map((maq, idx) => (
-  //             <Col>
-  //               <Card>
-  //                 <Card.Body
-  //                   style={{
-  //                     alignItems: "center",
-  //                   }}
-  //                 >
-  //                   <Card.Img
-  //                     style={{
-  //                       maxWidth: "250px",
-  //                     }}
-  //                     variant="top"
-  //                     src={require(`../assets/maquines/${maq.image_url}`)}
-  //                   />
-  //                   <Card.Title>{maq.nom}</Card.Title>
-  //                   <Card.Text>{maq.id_lab}</Card.Text>
-
-  //                   <Button
-  //                     className="rounded-pill w-100"
-  //                     variant="success"
-  //                     id={maq.id}
-  //                     value={maq.nom}
-  //                   >
-  //                     Activar
-  //                   </Button>
-  //                   <Button
-  //                     className="rounded-pill w-100"
-  //                     variant="danger"
-  //                     id={maq.id}
-  //                     value={maq.nom}
-  //                   >
-  //                     Desactivar
-  //                   </Button>
-  //                   <h3>
-  //                     Corrent{" "}
-  //                     <span class="label label-default">Valor corrent</span>
-  //                   </h3>
-  //                   <Status>
-  //                     {(() => {
-  //                       switch (maq.status) {
-  //                         case false:
-  //                           return <StatusIndicator color="#F17E7E" />; //vermell
-  //                         case true:
-  //                           return <StatusIndicator color="#75C282" />; //verd
-  //                         default:
-  //                           return <StatusIndicator color="#FFD056" />; //groc
-  //                       }
-  //                     })()}
-  //                   </Status>
-  //                 </Card.Body>
-  //               </Card>
-  //             </Col>
-  //           ))}
-  //         </Row>
-  //       </div>
-
-  //       <h1>Usuaris</h1>
-  //       <div>
-  //         <MDBTable>
-  //           <MDBTableHead class="table-dark">
-  //             <tr>
-  //               <th scope="col">#</th>
-  //               <th scope="col">ID</th>
-  //               <th scope="col">NOM</th>
-  //               <th scope="col">MAIL</th>
-  //               <th scope="col">ROL</th>
-  //               <th scope="col">AUTH</th>
-  //               <th scope="col">NFCID</th>
-  //               <th scope="col">EDITA</th>
-  //             </tr>
-  //           </MDBTableHead>
-  //           <MDBTableBody>
-  //             {usuaris.map((usuari, indx) => (
-  //               <tr>
-  //                 <th scope="row">{indx}</th>
-  //                 <td>{usuari.id}</td>
-  //                 <td>{usuari.nom_complert}</td>
-  //                 <td>{usuari.email}</td>
-  //                 <td>{usuari.role}</td>
-  //                 <td>{usuari.auth}</td>
-  //                 <td>{usuari.nfcid}</td>
-  //                 <td>
-  //                   <button  onClick={(e) => handleModifyData(usuari)}>
-  //                     <i><FontAwesomeIcon icon={solid('edit')} /></i>
-  //                   </button>
-  //                 </td>
-  //               </tr>
-  //             ))}
-  //           </MDBTableBody>
-  //         </MDBTable>
-  //       </div>
-  //       {showModal && (
-  //         <Modal show onHide={handleClose} centered>
-  //           <Modal.Header closeButton>
-  //             <Modal.Title>{usuari.nom}</Modal.Title>
-  //           </Modal.Header>
-  //           <Modal.Body>
-  //             <div class="mt-3">
-  //               <div class="form-outline form-white mt-3">
-  //                 <input ref={inputAuth} type="text" id="formWhite" class="form-control" />
-  //                 <label class="form-label" for="formWhite"  >AUTH</label>
-  //               </div>
-  // {/*               <TextField
-  //                 ref={inputAuth}
-  //                 id="auth"
-  //                 select
-  //                 label="AUTH"
-  //                 defaultValue={usuari.auth}
-  //               >
-  //                 {authorization.map((option) => (
-  //                   <MenuItem key={option.value} value={option.value}>
-  //                     {option.value}
-  //                   </MenuItem>
-  //                 ))}
-  //               </TextField> */}
-  //             </div>
-  //             <div class="mt-3" >
-  //               <div class="form-outline form-white mt-3">
-  //                 <input ref={inputNFCID} type="text" id="formWhite" class="form-control" />
-  //                 <label class="form-label" for="formWhite"  >NFCID</label>
-  //               </div>
-  //             </div>
-
-  // {/*             <div class="mt-3"><TextField id="nfcid" type="text" label="NFCID" defaultValue={usuari.nfcid} variant="standard" /></div>
-  //  */}
-  //           </Modal.Body>
-  //           <Modal.Footer>
-  //             <Button
-  //               className="rounded-pill w-100"
-  //               variant="primary"
-  //               onClick={handleClick}
-  //             >
-  //               Acceptar canvis
-  //             </Button>
-  //           </Modal.Footer>
-  //         </Modal>
-  //       )}
-  //     </div>
-  //   );
 };
+
 
 const Status = styled.div`
   display: flex;
