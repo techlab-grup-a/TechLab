@@ -16,7 +16,8 @@ import API_URL from "../services/config";
 
 const Reserves = ({ user }) => {
   const [reserves, setReserves] = useState([]);
-  const [pin, setPin] = useState("");
+  const [refetch, setRefetch] = useState(false);
+  const [pin, setPin] = useState(null);
 
   const navigate = useNavigate();
   const handleCloseModal = () => navigate("/");
@@ -39,15 +40,64 @@ const Reserves = ({ user }) => {
       .catch((err) => {
         console.log("AXIOS ERROR: ", err);
       });
-  }, []);
+  }, [refetch]);
 
 
-  const handleActivaPinMaquina = (id_maq){
+  const handleActivaPinMaquina = (dia, hores, id_usr, id_maq) => {
+    const pattern = new RegExp("^[0-9][0-9][0-9][0-9][0-9][0-9]$");
+    if (pattern.test(pin)) {
+      let id_token = sessionStorage.getItem("id_token");
 
+      const postData = {
+        dia: dia,
+        hores: hores,
+        id_maq: id_maq,
+        id_token: id_token,
+        pin: pin
+      };
+
+      axios
+      .post(API_URL + `/res/usr/${user.googleId}`, postData)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        setRefetch(!refetch);
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === 403) {
+            alert("Pin incorrecte")
+          }
+        }
+      });
+
+  } else {
+    alert('El pin ha de tenir 6 digits');
   }
+}
 
-  const handleCancelaReserva = (usuari, rang) {
-    
+  const handleCancelaReserva = (dia, hores, id_usr, id_maq) => {
+    console.log(dia, hores, id_usr, id_maq)
+
+    let id_token = sessionStorage.getItem("id_token");
+      
+    const putData = {
+      dia: dia,
+      hores: hores,
+      id_maq: id_maq,
+      id_token: id_token
+    };
+
+    axios
+      .put(API_URL + `/res/usr/${id_usr}`, putData)
+      .then((res) => {
+        console.log("RESPONSE RECEIVED: ", res);
+        alert('Reserva cancelada');
+        setRefetch(!refetch)
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+
   }
 
 
@@ -102,8 +152,8 @@ const Reserves = ({ user }) => {
                         style={{ margin: "0px 0px 20px 0px" }}
                         type="text"
                         placeholder="PIN"
-                        disabled={resv["pin_actiu"]}
-                        pattern='^[0-9][0-9][0-9][0-9][0-9][a-z0-9]$'
+                        // disabled={!resv["pin_actiu"] || resv["status"]}
+
                         onChange={(e) => {
                           setPin(e.target.value);
                         }}
@@ -111,8 +161,13 @@ const Reserves = ({ user }) => {
                     </InputGroup>
 
                     <Button
-                      onClick={() => console.log('holaaaa')}
-                      disabled={resv["pin_actiu"]}
+                      onClick={() => handleActivaPinMaquina(
+                        resv.dia,
+                        resv.hora,
+                        resv.id_usr,
+                        resv.id_maq
+                      )}
+                      // disabled={!resv["pin_actiu"] || resv["status"]}
                       style={{
                         margin: "0px 0px 10px 0px",
                         borderRadius: "20px",
@@ -124,6 +179,12 @@ const Reserves = ({ user }) => {
                     </Button>
 
                     <Button
+                      onClick={() => handleCancelaReserva(
+                        resv.dia,
+                        resv.hora,
+                        resv.id_usr,
+                        resv.id_maq
+                      )}
                       style={{
                         margin: "0px 0px 10px 0px",
                         borderRadius: "20px",
@@ -139,9 +200,13 @@ const Reserves = ({ user }) => {
               </Card.Body>
             </Container>
 
+            {
+            /* 
             <Card.Footer>
               <ProgressBar variant="primary" animated now={75} />
-            </Card.Footer>
+            </Card.Footer> 
+            */
+            }
           </Card>
         ))}
       </div>

@@ -31,7 +31,7 @@ const HeaderNavBar = ({user, admin}) => {
                 Reserves
               </Nav.Link>
               }
-              {user && <Nav.Link eventKey="4" as={Link} to={"/admin"}>
+              {admin && <Nav.Link eventKey="4" as={Link} to={"/admin"}>
                 Administrador
               </Nav.Link>
               } 

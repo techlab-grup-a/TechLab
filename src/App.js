@@ -14,6 +14,7 @@ import axios from "axios";
 export default function App() {
   const [admin, setAdmin] = useState(false);
   const [user, setUser] = useState(null);
+
   const handleSetUser = (usr) => {
     console.log("[handleSetUser] User set to:", usr);
     setUser(usr);
@@ -26,7 +27,7 @@ export default function App() {
       axios
         .get(API_URL + `/usr/?id_usr=${user.googleId}&id_token=${id_token}`)
         .then((res) => {
-          setAdmin(res.data["role"] == "admin");
+          setAdmin(res.data["role"] === "admin");
         })
         .catch((err) => {
           console.log(err);
