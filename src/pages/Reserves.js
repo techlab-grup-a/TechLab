@@ -1,3 +1,4 @@
+import API_URL from "../services/config";
 import React, { useState, useEffect } from "react";
 import {
   Button,
@@ -6,13 +7,11 @@ import {
   Container,
   Row,
   Col,
-  ProgressBar,
   Modal,
   InputGroup
 } from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import API_URL from "../services/config";
 
 const Reserves = ({ user }) => {
   const [reserves, setReserves] = useState([]);
@@ -133,7 +132,8 @@ const Reserves = ({ user }) => {
                         maxWidth: "250px",
                       }}
                       variant="top"
-                      src={require(`../assets/maquines/${resv.image_url}`)}
+                      src={resv.image_url}
+                      referrerPolicy="no-referrer"
                     />
                   </Col>
 

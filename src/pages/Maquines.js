@@ -128,8 +128,8 @@ const Maquines = ({ user }) => {
   };
 
   return (
-    <div style={{ margin: "0px" }}>
-      <Background />
+    <div style={{ margin: "0px"}}>
+    {/* <Background /> */}
 
       <div
         style={{
@@ -187,7 +187,8 @@ const Maquines = ({ user }) => {
                         maxWidth: "250px",
                       }}
                       variant="top"
-                      src={require(`../assets/maquines/${maq.image_url}`)}
+                      src={maq.image_url}
+                      referrerPolicy="no-referrer"
                     />
                     <Card.Title>{maq.nom}</Card.Title>
                     <Card.Text>{maq.id_lab}</Card.Text>

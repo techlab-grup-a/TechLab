@@ -11,7 +11,7 @@
 //   }
 
 import API_URL from "../services/config";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Form,
@@ -24,15 +24,32 @@ import {
   Badge,
   Card,
   Row,
-  Col
+  Col,
 } from "react-bootstrap";
+
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import styled from "styled-components";
 
+export const CustomDropdown = (props) => (
+  <div className="form-group">
+    <strong>{props.nom}</strong>
+    <select
+      className="form-control"
+      name="{props.nom}"
+      onChange={props.onChange}
+    >
+      <option defaultValue>Select {props.name}</option>
+      {props.options.map((item, index) => (
+        <option key={index} value={item.id}>
+          {item.nom}
+        </option>
+      ))}
+    </select>
+  </div>
+);
 
-const Admin = ({ user }) => {
-  const SECRET_API = "54d23618-9e0b-4574-a3e0-f7c8131d362f"
+const Admin = ({ user, setAdmin}) => {
+  const SECRET_API = "54d23618-9e0b-4574-a3e0-f7c8131d362f";
   // Usuari(s)
   const [usuaris, setUsuaris] = useState([]);
   const [usuari, setUsuari] = useState({
@@ -45,24 +62,75 @@ const Admin = ({ user }) => {
   });
 
   // Maquines
-  const [maquina, setMaquina] = useState({ id: "", nom: "" });
   const [maquines, setMaquines] = useState([]);
 
   // Control
   const [showModal, setShowModal] = useState(false);
-  const [date, setDate] = React.useState(new Date());
-
-  // Reserv(es)
-  const [reserva, setReserva] = useState([]);
 
   // Búsqueda
-  const [searchUsuaris, setSearchUsuaris] = useState('');
-  const [searchMaquines, setSearchMaquines] = useState('');
+  const [searchUsuaris, setSearchUsuaris] = useState("");
+  const [searchMaquines, setSearchMaquines] = useState("");
 
   // Dades usuari
-  const [auth, setAuth] = useState('');
-  const [nfc_id, setNfcId] = useState('');
+  const [auth, setAuth] = useState("");
+  const [nfc_id, setNfcId] = useState("");
   const [refetchUsuaris, setRefechUsuaris] = useState(false);
+
+  // Nova màquina
+  const [nom_maq, setNomMaq] = useState(null);
+  const [id_maq, setIdMaq] = useState(null);
+  const [url_maq, setUrlMaq] = useState(null);
+  const [id_uni, setIdUni] = useState(null);
+  const [id_lab, setIdLab] = useState(null);
+  const [unis, setUnis] = useState([]);
+  const [labs, setLabs] = useState([]);
+
+  // Nou TechLab
+  const [nom_lab, setNomLab] = useState(null);
+  const [id_uni_lab, setIdUniLab] = useState(null);
+
+  // Refresh page
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   window.addEventListener("beforeunload", alertUser);
+  //   // window.addEventListener('unload', endSessionRefresh)
+  //   return () => {
+  //     // console.log('dkjhsdkjghlkjgd');
+  //     // navigate('/');
+  //     // setAdmin(null);
+  //     window.removeEventListener("beforeunload", alertUser);
+  //     // window.removeEventListener('unload', endSessionRefresh)
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    window.onbeforeunload = function() {
+        // navigate('/');
+        // setAdmin(null);
+        console.log('dlfsklfghdlkjghkljsfhg')
+        return true;
+    };
+
+    return () => {
+      // navigate('/');
+      // setAdmin(null);
+        window.onbeforeunload = '';
+    };
+}, []);
+
+  const alertUser = (e) => {
+    navigate('/');
+    // setAdmin(null);
+
+    // e.preventDefault();
+    // e.returnValue = "";
+  };
+  
+  // const endSessionRefresh = () => {
+  //   navigate('/');
+  //   setAdmin(null);
+  // }
 
   useEffect(() => {
     axios
@@ -75,6 +143,30 @@ const Admin = ({ user }) => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(API_URL + `/uni/`)
+      .then((res) => {
+        setUnis(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(API_URL + `/lab/${id_uni}`)
+      .then((res) => {
+        setLabs(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id_uni]);
 
   useEffect(() => {
     let id_token = sessionStorage.getItem("id_token");
@@ -90,9 +182,52 @@ const Admin = ({ user }) => {
       });
   }, [refetchUsuaris]);
 
+  const handleAddMaquina = () => {
+    let id_token = sessionStorage.getItem("id_token");
+
+    const postData = {
+      id_token: id_token,
+      nom_maq: nom_maq,
+      url_maq: url_maq,
+      id_maq: id_maq,
+      id_uni: id_uni,
+      id_lab: id_lab,
+      auth: auth,
+    };
+
+    axios
+      .post(API_URL + "/maq/", postData)
+      .then((res) => {
+        alert("Maquina afegida");
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+  };
+
+  const handleAddLaboratori = () => {
+    let id_token = sessionStorage.getItem("id_token");
+
+    console.log('holalkdsjkdl', nom_lab, id_uni_lab);
+
+    const postData = {
+      id_token: id_token,
+      id_lab: nom_lab
+    };
+
+    axios
+      .post(API_URL + `/lab/${id_uni_lab}`, postData)
+      .then((res) => {
+        alert("TechLab afegit");
+      })
+      .catch((err) => {
+        console.log("AXIOS ERROR: ", err);
+      });
+  };
+
   const handleModifyData = (usuari) => {
     setShowModal(true);
-    
+
     setAuth(usuari.auth);
     setNfcId(usuari.nfcid);
 
@@ -107,15 +242,17 @@ const Admin = ({ user }) => {
   };
 
   function handleClickPutUser() {
-    const pattern = new RegExp("^$|[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$");
+    const pattern = new RegExp(
+      "^$|[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$"
+    );
     if (pattern.test(nfc_id)) {
       let id_token = sessionStorage.getItem("id_token");
-      
+
       const putData = {
         id_token: id_token,
         id_usr: usuari.id,
         auth: auth,
-        nfc_id: nfc_id
+        nfc_id: nfc_id,
       };
 
       axios
@@ -123,17 +260,16 @@ const Admin = ({ user }) => {
         .then((res) => {
           console.log("RESPONSE RECEIVED: ", res);
           setShowModal(false);
-          alert('Usuari actualitzat');
-          setRefechUsuaris(!refetchUsuaris)
+          alert("Usuari actualitzat");
+          setRefechUsuaris(!refetchUsuaris);
         })
         .catch((err) => {
           console.log("AXIOS ERROR: ", err);
         });
     } else {
-      alert('Format incorrecte');
+      alert("Format incorrecte");
     }
   }
-
 
   const handleRunMaquina = (id_maquina, run) => {
     const putData = {
@@ -146,35 +282,227 @@ const Admin = ({ user }) => {
       .put(API_URL + "/maq/", putData)
       .then((res) => {
         console.log("RESPONSE RECEIVED: ", res);
-        alert('Resposta exitosa');
+        alert("Resposta exitosa");
       })
       .catch((err) => {
         console.log("AXIOS ERROR: ", err);
       });
-    
-  }
+  };
 
   const handleSelectAuth = (e) => {
-    if (e === 'auth-1') {
+    if (e === "auth-1") {
       setAuth(1);
-    } else if (e === 'auth-2') {
+    } else if (e === "auth-2") {
       setAuth(2);
-    } else if (e === 'auth-3') {
+    } else if (e === "auth-3") {
       setAuth(3);
     }
   };
 
   const handleClose = () => {
+    setAuth(undefined);
     setShowModal(false);
   };
- 
-
-
 
   return (
     <Container>
+
+      {/* 
+        
+        Nova màquina 
+      
+      */}
+      <div
+        className="modal show"
+        style={{ display: "block", position: "initial" }}
+      >
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title>Nova màquina</Modal.Title>
+          </Modal.Header>
+
+          <Container>
+            <InputGroup style={{ margin: "20px 0px 20px 0px" }}>
+              <Form.Control
+                onChange={(e) => {
+                  setNomMaq(e.target.value);
+                }}
+                placeholder="Nom"
+              />
+            </InputGroup>
+
+            <InputGroup style={{ margin: "20px 0px 20px 0px" }}>
+              <Form.Control
+                onChange={(e) => {
+                  setIdMaq(e.target.value);
+                }}
+                placeholder="Addreça (MAC)"
+              />
+            </InputGroup>
+
+            <InputGroup style={{ margin: "0px 0px 20px 0px" }}>
+              <Form.Control
+                onChange={(e) => {
+                  setUrlMaq(e.target.value);
+                }}
+                placeholder="Imatge (URL)"
+              />
+            </InputGroup>
+          </Container>
+
+          <Container>
+            <CustomDropdown
+              // name={this.state.nom}
+              options={unis}
+              onChange={(e) => {
+                console.log("unis", e.target.value);
+                setIdUni(e.target.value);
+              }}
+            />
+          </Container>
+
+          <Container style={{ margin: "20px 0px 20px 0px" }}>
+            <CustomDropdown
+              // name={this.state.nom}
+              options={labs}
+              onChange={(e) => {
+                console.log("labs", e.target.value);
+                setIdLab(e.target.value);
+              }}
+            />
+          </Container>
+
+          <Container style={{ margin: "0px 0px 20px 0px" }}>
+            <DropdownButton
+              title="Auth"
+              variant="outline-primary"
+              onSelect={handleSelectAuth}
+            >
+              <Dropdown.Item eventKey="auth-1">1</Dropdown.Item>
+              <Dropdown.Item eventKey="auth-2">2</Dropdown.Item>
+              <Dropdown.Item eventKey="auth-3">3</Dropdown.Item>
+            </DropdownButton>
+
+            {!showModal &&
+              (() => {
+                switch (auth) {
+                  case 1:
+                    return (
+                      <Badge
+                        style={{ width: "70px", heigth: "20px" }}
+                        pill
+                        bg={"success"}
+                      >
+                        {" "}
+                        {auth}{" "}
+                      </Badge>
+                    );
+                  case 2:
+                    return (
+                      <Badge
+                        style={{ width: "70px", heigth: "20px" }}
+                        pill
+                        bg={"danger"}
+                      >
+                        {" "}
+                        {auth}{" "}
+                      </Badge>
+                    );
+                  case 3:
+                    return (
+                      <Badge
+                        style={{ width: "70px", heigth: "20px" }}
+                        pill
+                        bg={"primary"}
+                      >
+                        {" "}
+                        {auth}{" "}
+                      </Badge>
+                    );
+                  default:
+                    return (
+                      <Badge
+                        style={{ width: "70px", heigth: "20px" }}
+                        pill
+                        bg={"warning"}
+                      >
+                        {" "}
+                        {auth}{" "}
+                      </Badge>
+                    );
+                }
+              })()}
+          </Container>
+
+          <Modal.Footer>
+            <Button
+              onClick={handleAddMaquina}
+              style={{ borderRadius: "20px" }}
+              className="w-100"
+              variant="primary"
+            >
+              Afegir
+            </Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </div>
+      
+      {/* 
+        
+        Nou TechLab 
+        
+      */}
       <Container>
-        <Form style={{margin: "20px 0px 20px 0px"}}>
+      <div
+        className="modal show"
+        style={{ display: "block", position: "initial" }}
+      >
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title>Nou <b><i>TechLab</i></b></Modal.Title>
+          </Modal.Header>
+            
+            <Container>
+
+          <InputGroup style={{ margin: "20px 0px 20px 0px" }}>
+              <Form.Control
+                onChange={(e) => {
+                  setNomLab(e.target.value);
+                }}
+                placeholder="Nom"
+                />
+            </InputGroup>
+              </Container>
+
+            <Container style={{margin: "0px 0 20px 0px"}}>
+
+            <CustomDropdown
+              options={unis}
+              onChange={(e) => {
+                console.log("unis", e.target.value);
+                setIdUniLab(e.target.value);
+              }}
+              />
+              </Container>
+
+              <Modal.Footer>
+            <Button
+              onClick={handleAddLaboratori}
+              style={{ borderRadius: "20px" }}
+              className="w-100"
+              variant="primary"
+            >
+              Afegir
+            </Button>
+          </Modal.Footer>
+
+          </Modal.Dialog>
+        </div>
+      </Container>
+
+
+      <Container>
+        <Form style={{ margin: "20px 0px 20px 0px" }}>
           <InputGroup>
             <Form.Control
               onChange={(e) => {
@@ -207,11 +535,11 @@ const Admin = ({ user }) => {
                       .includes(searchUsuaris.toLocaleLowerCase());
               })
               .map((usuari, indx) => (
-                <tr 
-                key={usuari.id}
-                onClick={(e) => {
-                  handleModifyData(usuari);
-                }}
+                <tr
+                  key={usuari.id}
+                  onClick={(e) => {
+                    handleModifyData(usuari);
+                  }}
                 >
                   <th scope="row">{indx}</th>
                   <td>{usuari.nom_complert}</td>
@@ -224,53 +552,88 @@ const Admin = ({ user }) => {
           </tbody>
         </Table>
 
-
         {showModal && (
           <Modal show onHide={handleClose} centered>
             <Modal.Header closeButton>
               <Modal.Title>{usuari.nom}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-
-
-              <Container style={{display: 'flex', flexDirection: 'row', alignItems: 'center', columnGap: '20px'}}>
-
-              <DropdownButton
-                title="Auth"
-                variant="outline-primary"
-                onSelect={handleSelectAuth}
+              <Container
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  columnGap: "20px",
+                }}
+              >
+                <DropdownButton
+                  title="Auth"
+                  variant="outline-primary"
+                  onSelect={handleSelectAuth}
                 >
-                <Dropdown.Item eventKey="auth-1">1</Dropdown.Item>
-                <Dropdown.Item eventKey="auth-2">2</Dropdown.Item>
-                <Dropdown.Item eventKey="auth-3">3</Dropdown.Item>
-              </DropdownButton>
-
-
+                  <Dropdown.Item eventKey="auth-1">1</Dropdown.Item>
+                  <Dropdown.Item eventKey="auth-2">2</Dropdown.Item>
+                  <Dropdown.Item eventKey="auth-3">3</Dropdown.Item>
+                </DropdownButton>
 
                 {(() => {
                   switch (auth) {
                     case 1:
-                      return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"success"}> {auth} </Badge>;
+                      return (
+                        <Badge
+                          style={{ width: "70px", heigth: "20px" }}
+                          pill
+                          bg={"success"}
+                        >
+                          {" "}
+                          {auth}{" "}
+                        </Badge>
+                      );
                     case 2:
-                      return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"danger"}> {auth} </Badge>;
-                      case 3:
-                        return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"primary"}> {auth} </Badge>;
-                        default:
-                          return <Badge style={{width: "70px", heigth: '20px'}} pill bg={"warning"}> {auth} </Badge>;
-                        }
-                      })()}
-
+                      return (
+                        <Badge
+                          style={{ width: "70px", heigth: "20px" }}
+                          pill
+                          bg={"danger"}
+                        >
+                          {" "}
+                          {auth}{" "}
+                        </Badge>
+                      );
+                    case 3:
+                      return (
+                        <Badge
+                          style={{ width: "70px", heigth: "20px" }}
+                          pill
+                          bg={"primary"}
+                        >
+                          {" "}
+                          {auth}{" "}
+                        </Badge>
+                      );
+                    default:
+                      return (
+                        <Badge
+                          style={{ width: "70px", heigth: "20px" }}
+                          pill
+                          bg={"warning"}
+                        >
+                          {" "}
+                          {auth}{" "}
+                        </Badge>
+                      );
+                  }
+                })()}
               </Container>
 
-                <InputGroup style={{margin: "20px 0px 20px 0px"}}>
-                  <Form.Control
-                    onChange={(e) => {
-                      setNfcId(e.target.value);
-                    }}
-                    placeholder="NFC_ID"
-                  />
-                </InputGroup>
-
+              <InputGroup style={{ margin: "20px 0px 20px 0px" }}>
+                <Form.Control
+                  onChange={(e) => {
+                    setNfcId(e.target.value);
+                  }}
+                  placeholder="NFC_ID"
+                />
+              </InputGroup>
             </Modal.Body>
             <Modal.Footer>
               <Button
@@ -283,11 +646,9 @@ const Admin = ({ user }) => {
             </Modal.Footer>
           </Modal>
         )}
-
-
       </Container>
 
-      <Container style={{marginBottom: "20px"}}>
+      <Container style={{ marginBottom: "20px" }}>
         <Form>
           <InputGroup>
             <Form.Control
@@ -316,84 +677,92 @@ const Admin = ({ user }) => {
                       .includes(searchMaquines.toLocaleLowerCase());
               })
               .map((maq, idx) => (
-              <Col>
-                <Card style={{marginTop: "20px"}}>
-                  <Card.Body
-                    style={{
-                      alignItems: "center",
-                    }}
-                  >
-                    <Card.Img
+                <Col>
+                  <Card style={{ marginTop: "20px" }}>
+                    <Card.Body
                       style={{
-                        maxWidth: "250px",
+                        alignItems: "center",
                       }}
-                      variant="top"
-                      src={require(`../assets/maquines/${maq.image_url}`)}
-                    />
-                    <Card.Title>{maq.nom}</Card.Title>
-                    <Card.Text>
-                      {maq.id_lab} <br/>
-                      <b><i>Auth:</i></b> {maq.auth_min} <br/>
-                      <b><i>Corrent:</i></b> {maq.corrent}
-                    </Card.Text>
-
-                    <Button
-                      onClick={() => handleRunMaquina(maq.id, true)}
-                      style={{marginBottom: "10px"}}
-                      className="rounded-pill w-100"
-                      variant="primary"
-                      id={maq.id}
-                      value={maq.nom}
                     >
-                      Activar
-                    </Button>
+                      <Card.Img
+                        style={{
+                          maxWidth: "250px",
+                        }}
+                        variant="top"
+                        src={maq.image_url}
+                        referrerPolicy="no-referrer"
+                      />
+                      <Card.Title>{maq.nom}</Card.Title>
+                      <Card.Text>
+                        {maq.id_lab} <br />
+                        <b>
+                          <i>Auth:</i>
+                        </b>{" "}
+                        {maq.auth_min} <br />
+                        <b>
+                          <i>Corrent:</i>
+                        </b>{" "}
+                        {maq.corrent}
+                      </Card.Text>
 
-                    <Button
-                      onClick={() => handleRunMaquina(maq.id, false)}
-                      className="rounded-pill w-100"
-                      variant="danger"
-                      id={maq.id}
-                      value={maq.nom}
-                    >
-                      Desactivar
-                    </Button>
+                      <Button
+                        onClick={() => handleRunMaquina(maq.id, true)}
+                        style={{ marginBottom: "10px" }}
+                        className="rounded-pill w-100"
+                        variant="primary"
+                        id={maq.id}
+                        value={maq.nom}
+                      >
+                        Activar
+                      </Button>
 
-                  </Card.Body>
-                  <Card.Footer>
-                  {(() => {
-                      let currentTimestamp = new Date();
-                      let difference = currentTimestamp - maq.status;
-                      if ( (difference / (1000 * 60)) > 5) {
-                        return <Badge style={{width: "100px", heigth: '20px'}} pill bg={"warning"}> Unreachable </Badge>;
-                      }  else {
-                        return <Badge style={{width: "100px", heigth: '20px'}} pill bg={"primary"}> Ok </Badge>;
-                      }
+                      <Button
+                        onClick={() => handleRunMaquina(maq.id, false)}
+                        className="rounded-pill w-100"
+                        variant="danger"
+                        id={maq.id}
+                        value={maq.nom}
+                      >
+                        Desactivar
+                      </Button>
+                    </Card.Body>
+                    <Card.Footer>
+                      {(() => {
+                        let currentTimestamp = new Date();
+                        let difference = currentTimestamp - maq.status;
+                        if (difference / (1000 * 60) > 5) {
+                          return (
+                            <Badge
+                              style={{ width: "100px", heigth: "20px" }}
+                              pill
+                              bg={"warning"}
+                            >
+                              {" "}
+                              Unreachable{" "}
+                            </Badge>
+                          );
+                        } else {
+                          return (
+                            <Badge
+                              style={{ width: "100px", heigth: "20px" }}
+                              pill
+                              bg={"primary"}
+                            >
+                              {" "}
+                              Ok{" "}
+                            </Badge>
+                          );
+                        }
                       })()}
-                  </Card.Footer>
-                </Card>
-              </Col>
-            ))}
+                    </Card.Footer>
+                  </Card>
+                </Col>
+              ))}
           </Row>
         </div>
-
-        </Container>
+      </Container>
     </Container>
   );
 };
-
-
-const Status = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const StatusIndicator = styled.div`
-  width: 15px;
-  height: 15px;
-  border-radius: 10px;
-  margin-left: 1rem;
-  position: absolute;
-  right: 7rem;
-`;
 
 export default Admin;

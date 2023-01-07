@@ -42,7 +42,7 @@ export default function App() {
           <Route index element={<Home />} />
           {user && <Route path="reserves" element={<Reserves user={user} />} />}
           <Route path="maquines" element={<Maquines user={user} />} />
-          <Route path="admin" element={<Admin user={user} />} />
+          <Route path="admin" element={<Admin user={user} setAdmin={setAdmin}/>} />
           <Route
             path="perfil"
             element={

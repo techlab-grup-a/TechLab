@@ -30,10 +30,7 @@ const LoginPerfil = ({ user, handleSetUser, handleSetAdmin }) => {
   }
 
   return (
-    <div
-    // className="modal show"
-    // style={{ display: 'block', position: 'initial' }}
-    >
+    <div>
       <Background />
 
       <div
@@ -51,10 +48,9 @@ const LoginPerfil = ({ user, handleSetUser, handleSetAdmin }) => {
               style={{
                 borderRadius: "50%",
               }}
+              alt="Imatge perfil"
               referrerPolicy="no-referrer"
             />
-            <hr></hr>
-            <b>Autorització:</b> 5
           </Modal.Body>
 
           <Modal.Footer>
