@@ -89,14 +89,27 @@ const Admin = ({ user, setAdmin}) => {
 
   useEffect(() => {
     axios
-      .get(API_URL + `/maq/`)
-      .then((res) => {
-        setMaquines(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .get(API_URL + `/maq/`)
+    .then((res) => {
+      setMaquines(res.data);
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+    const interval = setInterval(() => {
+      axios
+        .get(API_URL + `/maq/`)
+        .then((res) => {
+          setMaquines(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -706,9 +719,19 @@ const Admin = ({ user, setAdmin}) => {
                     </Card.Body>
                     <Card.Footer>
                       {(() => {
-                        let currentTimestamp = new Date();
-                        let difference = currentTimestamp - maq.status;
-                        if (difference / (1000 * 60) > 5) {
+
+                        // let currentTimestamp = new Date();
+                        // let difference = currentTimestamp.getTime()/1000 - maq.status;
+                        // console.log(
+                        //   // currentTimestamp, '\n',
+                        //   // currentTimestamp.getTime(), '\n',
+                        //   // Date.now(), '\n',
+                        //   // maq.status, '\n',
+                        //   Date.now() - maq.status
+                        //   );
+                        
+                        // let currDate = new Date();
+                        if (!maq.status) {
                           return (
                             <Badge
                               style={{ width: "100px", heigth: "20px" }}
