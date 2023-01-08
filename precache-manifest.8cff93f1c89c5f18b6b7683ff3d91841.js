@@ -52,7 +52,7 @@ self.__precacheManifest = [
     "url": "/TechLab/static/media/perfil.4d8d5b57.jpg"
   },
   {
-    "revision": "59bd02e69b21debff20f4c47d65c0c15",
+    "revision": "24a687fec0b784678dd8cc2d6adb88cd",
     "url": "/TechLab/index.html"
   }
 ];
