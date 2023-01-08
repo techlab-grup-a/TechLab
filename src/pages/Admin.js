@@ -1,15 +1,3 @@
-// import { browserHistory } from "react-router"; // Al fer REFRESH S'HA DE CONTEMPLAR I "TANCAR SESSIO O POSAR ADMIN = FALSE"
-// window.onload = function() {
-//   console.log('adeuuuu')
-
-// };
-
-// if(sessionStorage.reload && history.location.pathname!=='/') {
-//   console.log(this.props);
-//     sessionStorage.reload = "";
-//     history.push('/');
-//   }
-
 import API_URL from "../services/config";
 import React, { useState, useEffect } from "react";
 import {
@@ -27,7 +15,6 @@ import {
   Col,
 } from "react-bootstrap";
 
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const CustomDropdown = (props) => (
@@ -90,47 +77,15 @@ const Admin = ({ user, setAdmin}) => {
   const [id_uni_lab, setIdUniLab] = useState(null);
 
   // Refresh page
-  const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   window.addEventListener("beforeunload", alertUser);
-  //   // window.addEventListener('unload', endSessionRefresh)
-  //   return () => {
-  //     // console.log('dkjhsdkjghlkjgd');
-  //     // navigate('/');
-  //     // setAdmin(null);
-  //     window.removeEventListener("beforeunload", alertUser);
-  //     // window.removeEventListener('unload', endSessionRefresh)
-  //   };
-  // }, []);
-
   useEffect(() => {
     window.onbeforeunload = function() {
-        // navigate('/');
-        // setAdmin(null);
-        console.log('dlfsklfghdlkjghkljsfhg')
         return true;
     };
 
     return () => {
-      // navigate('/');
-      // setAdmin(null);
         window.onbeforeunload = '';
     };
 }, []);
-
-  const alertUser = (e) => {
-    navigate('/');
-    // setAdmin(null);
-
-    // e.preventDefault();
-    // e.returnValue = "";
-  };
-  
-  // const endSessionRefresh = () => {
-  //   navigate('/');
-  //   setAdmin(null);
-  // }
 
   useEffect(() => {
     axios

@@ -6,7 +6,7 @@ import axios from "axios";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import { addMonths } from "date-fns";
-import Background from "../layout/Background";
+// import Background from "../layout/Background";
 
 
 const Maquines = ({ user, auth }) => {

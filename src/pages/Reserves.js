@@ -59,6 +59,7 @@ const Reserves = ({ user }) => {
       .post(API_URL + `/res/usr/${user.googleId}`, postData)
       .then((res) => {
         console.log("RESPONSE RECEIVED: ", res);
+        alert("En breu la reserva s'activarà")
         setRefetch(!refetch);
       })
       .catch((err) => {
@@ -191,6 +192,7 @@ const Reserves = ({ user }) => {
                       }}
                       className="w-100"
                       variant="danger"
+                      disabled={resv.status}
                     >
                       Cancel·lar
                     </Button>
