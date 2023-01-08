@@ -9,7 +9,7 @@ import { addMonths } from "date-fns";
 import Background from "../layout/Background";
 
 
-const Maquines = ({ user }) => {
+const Maquines = ({ user, auth }) => {
   // Universitats
   const [universitat, setUniversitat] = useState({});
   const [universitats, setUniversitats] = useState([]);
@@ -39,7 +39,7 @@ const Maquines = ({ user }) => {
 
   useEffect(() => {
     axios
-      .get(API_URL + `/maq/?id_uni=${universitat}`)
+      .get(API_URL + `/maq/?id_uni=${universitat}&auth=${auth}`)
       .then((res) => {
         console.log(res);
         setMaquines(res.data);
@@ -176,10 +176,10 @@ const Maquines = ({ user }) => {
           <Row xs={1} md={4} className="g-4">
             {maquines.map((maq, idx) => (
               <Col>
-                <Card>
+                <Card style={{width: "100%"}}>
                   <Card.Body
                     style={{
-                      alignItems: "center",
+                      alignItems: "center"
                     }}
                   >
                     <Card.Img

@@ -245,14 +245,39 @@ const Admin = ({ user, setAdmin}) => {
     const pattern = new RegExp(
       "^$|[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]:[a-z0-9][a-z0-9][:][a-z0-9][a-z0-9]$"
     );
-    if (pattern.test(nfc_id)) {
+    if (nfc_id) {
+      if (pattern.test(nfc_id)) {
+        let id_token = sessionStorage.getItem("id_token");
+
+        const putData = {
+          id_token: id_token,
+          id_usr: usuari.id,
+          auth: auth,
+          nfc_id: nfc_id,
+        };
+
+        axios
+          .put(API_URL + "/usr/", putData)
+          .then((res) => {
+            console.log("RESPONSE RECEIVED: ", res);
+            setShowModal(false);
+            alert("Usuari actualitzat");
+            setRefechUsuaris(!refetchUsuaris);
+          })
+          .catch((err) => {
+            console.log("AXIOS ERROR: ", err);
+          });
+      } else {
+        alert("Format incorrecte");
+      }
+    }
+    else {
       let id_token = sessionStorage.getItem("id_token");
 
       const putData = {
         id_token: id_token,
         id_usr: usuari.id,
-        auth: auth,
-        nfc_id: nfc_id,
+        auth: auth
       };
 
       axios
@@ -266,8 +291,6 @@ const Admin = ({ user, setAdmin}) => {
         .catch((err) => {
           console.log("AXIOS ERROR: ", err);
         });
-    } else {
-      alert("Format incorrecte");
     }
   }
 

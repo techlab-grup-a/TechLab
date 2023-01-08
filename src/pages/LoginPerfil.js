@@ -6,7 +6,7 @@ import LogIn from "../components/Auth/LogIn";
 import LogOut from "../components/Auth/LogOut";
 import Background from "../layout/Background";
 
-const LoginPerfil = ({ user, handleSetUser, handleSetAdmin }) => {
+const LoginPerfil = ({ user, handleSetUser, handleSetAdmin, handleSetAuth }) => {
   const navigate = useNavigate();
   const handleClose = () => navigate("/");
 
@@ -57,6 +57,7 @@ const LoginPerfil = ({ user, handleSetUser, handleSetAdmin }) => {
             <LogOut
               handleSetUser={handleSetUser}
               handleSetAdmin={handleSetAdmin}
+              handleSetAuth={handleSetAuth}
             />
           </Modal.Footer>
         </Modal.Dialog>

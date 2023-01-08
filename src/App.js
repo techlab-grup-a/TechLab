@@ -13,6 +13,8 @@ import axios from "axios";
 
 export default function App() {
   const [admin, setAdmin] = useState(false);
+  const [auth, setAuth] = useState(null);
+
   const [user, setUser] = useState(null);
 
   const handleSetUser = (usr) => {
@@ -27,7 +29,9 @@ export default function App() {
       axios
         .get(API_URL + `/usr/?id_usr=${user.googleId}&id_token=${id_token}`)
         .then((res) => {
+          console.log('uasuariiiiiii', res.data)
           setAdmin(res.data["role"] === "admin");
+          setAuth(res.data["auth"]);
         })
         .catch((err) => {
           console.log(err);
@@ -41,7 +45,7 @@ export default function App() {
         <Route path="/" element={<HeaderNavBar user={user} admin={admin} />}>
           <Route index element={<Home />} />
           {user && <Route path="reserves" element={<Reserves user={user} />} />}
-          <Route path="maquines" element={<Maquines user={user} />} />
+          <Route path="maquines" element={<Maquines user={user} auth={auth}/>} />
           <Route path="admin" element={<Admin user={user} setAdmin={setAdmin}/>} />
           <Route
             path="perfil"
@@ -50,6 +54,7 @@ export default function App() {
                 user={user}
                 handleSetUser={handleSetUser}
                 handleSetAdmin={setAdmin}
+                handleSetAuth={setAuth}
               />
             }
           />
