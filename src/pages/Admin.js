@@ -719,18 +719,6 @@ const Admin = ({ user, setAdmin}) => {
                     </Card.Body>
                     <Card.Footer>
                       {(() => {
-
-                        // let currentTimestamp = new Date();
-                        // let difference = currentTimestamp.getTime()/1000 - maq.status;
-                        // console.log(
-                        //   // currentTimestamp, '\n',
-                        //   // currentTimestamp.getTime(), '\n',
-                        //   // Date.now(), '\n',
-                        //   // maq.status, '\n',
-                        //   Date.now() - maq.status
-                        //   );
-                        
-                        // let currDate = new Date();
                         if (!maq.status) {
                           return (
                             <Badge
@@ -755,6 +743,35 @@ const Admin = ({ user, setAdmin}) => {
                           );
                         }
                       })()}
+                      
+                    <br/>
+
+                    {(() => {
+                    if (!maq.run) {
+                      return (
+                        <Badge
+                          style={{ width: "100px", heigth: "20px" }}
+                          pill
+                          bg={"danger"}
+                        >
+                          {" "}
+                          Stopped{" "}
+                        </Badge>
+                      );
+                    } else {
+                      return (
+                        <Badge
+                          style={{ width: "100px", heigth: "20px" }}
+                          pill
+                          bg={"success"}
+                        >
+                          {" "}
+                          Running{" "}
+                        </Badge>
+                      );
+                    }
+                    })()}
+
                     </Card.Footer>
                   </Card>
                 </Col>

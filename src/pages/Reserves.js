@@ -153,7 +153,9 @@ const Reserves = ({ user }) => {
                         style={{ margin: "0px 0px 20px 0px" }}
                         type="text"
                         placeholder="PIN"
-                        disabled={!resv["pin_actiu"] || resv["status"]}
+                        // disabled={!resv["pin_actiu"] || resv["status"]}
+                        disabled={!resv["pin_actiu"]}
+
 
                         onChange={(e) => {
                           setPin(e.target.value);
@@ -168,7 +170,8 @@ const Reserves = ({ user }) => {
                         resv.id_usr,
                         resv.id_maq
                       )}
-                      disabled={!resv["pin_actiu"] || resv["status"]}
+                      // disabled={!resv["pin_actiu"] || resv["status"]}
+                      disabled={!resv["pin_actiu"]}
                       style={{
                         margin: "0px 0px 10px 0px",
                         borderRadius: "20px",
@@ -192,7 +195,8 @@ const Reserves = ({ user }) => {
                       }}
                       className="w-100"
                       variant="danger"
-                      disabled={resv.status}
+                      // disabled={resv.status}
+                      disabled={resv["pin_actiu"] || resv["status"]}
                     >
                       Cancel·lar
                     </Button>
