@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "fc1d0c109683fb116b7f",
-    "url": "/TechLab/static/js/main.fc1d0c10.chunk.js"
+    "revision": "2a6868aaf9eb9cd50618",
+    "url": "/TechLab/static/js/main.2a6868aa.chunk.js"
   },
   {
     "revision": "70ac2e427f9ce535f3ef",
@@ -36,7 +36,7 @@ self.__precacheManifest = [
     "url": "/TechLab/static/media/wave5.4354a0f7.svg"
   },
   {
-    "revision": "3f8b1f411d1c0979d4e713c47cc32569",
+    "revision": "0b94260303e099def4fab7b76067e4bb",
     "url": "/TechLab/index.html"
   }
 ];
